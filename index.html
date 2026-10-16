@@ -10,6 +10,11 @@
   <meta property="og:description" content="A tiny birthday surprise made with love by Kamyab.">
   <title>Happy Birthday, Negin! ♡</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23ffe0eb'/%3E%3Ctext x='32' y='46' font-size='42' text-anchor='middle'%3E%F0%9F%8E%82%3C/text%3E%3C/svg%3E">
+  <!-- October 17, 2026 at 00:00 Tehran = October 16, 2026 at 20:30 UTC. -->
+  <script>
+    document.documentElement.dataset.birthdayUnlocked =
+      Date.now() >= Date.parse('2026-10-16T20:30:00Z') ? 'yes' : 'no';
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -199,10 +204,88 @@
     }
     @media (min-width:720px) { .card { padding:22px 20px 18px; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
+
+    /* Waiting-room gate: birthday content remains hidden before Tehran midnight. */
+    #birthday-main { display:none; }
+    #countdown-screen { display:block; }
+    html[data-birthday-unlocked="yes"] #birthday-main { display:block; animation: birthday-entrance .65s cubic-bezier(.2,.8,.2,1) both; }
+    html[data-birthday-unlocked="yes"] #countdown-screen { display:none; }
+    .wait-card {
+      width:min(100%,430px);
+      position:relative;
+      isolation:isolate;
+      overflow:hidden;
+      padding:21px 20px 26px;
+      border-radius:29px;
+      border:1px solid #fff;
+      background:var(--paper);
+      box-shadow:0 20px 60px var(--shadow),0 2px 0 #f4e6ef;
+      text-align:center;
+    }
+    .wait-card::before { content:''; position:absolute; z-index:-1; top:-115px; right:-120px; width:240px; height:240px; border-radius:50%; background:#fff0d9; }
+    .wait-card::after { content:''; position:absolute; z-index:-1; bottom:-160px; left:-130px; width:280px; height:280px; border-radius:50%; background:#f3e8ff; }
+    .wait-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .wait-top .mini-tag { background:#f9eaf5; border-radius:99px; padding:8px 11px; color:#9265a0; font-size:10px; font-weight:900; letter-spacing:.05em; }
+    .wait-top .mini-heart { color:#ee8dae; font-size:17px; }
+    .lock-art { height:120px; position:relative; display:grid; place-items:center; margin:6px 0 3px; }
+    .big-envelope { position:relative; width:124px; height:83px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(140deg,#f9bdd3,#ffddea); box-shadow:0 9px 0 #f8e2ec,0 16px 22px #c78ca532; transform:rotate(-7deg); animation:floaty 3.4s ease-in-out infinite; }
+    .big-envelope::before { content:''; position:absolute; inset:0; background:#ffedf3; clip-path:polygon(0 0,100% 0,50% 61%); border-radius:12px 12px 0 0; }
+    .big-envelope::after { content:'♥'; position:absolute; left:50%; top:53%; transform:translate(-50%,-5%); color:white; background:#f68bab; border-radius:50%; width:35px; height:35px; display:grid; place-items:center; font-size:17px; box-shadow:0 3px 0 #e5a8bc; }
+    .lock-art .item { position:absolute; font-size:29px; filter:drop-shadow(0 3px 2px #bd83aa16); animation:floaty 3s ease-in-out infinite; }
+    .lock-art .tea { left:calc(50% - 121px); bottom:6px; transform:rotate(-13deg); animation-delay:.25s; }
+    .lock-art .chocolate { right:calc(50% - 122px); top:12px; animation-delay:.6s; }
+    .lock-art .star1 { left:calc(50% - 98px); top:12px; font-size:21px; color:#e0b261; }
+    .lock-art .star2 { right:calc(50% - 88px); bottom:0; font-size:19px; color:#bb9ae9; animation-delay:.8s; }
+    .wait-eyebrow { margin:0; color:#a77daf; text-transform:uppercase; letter-spacing:.16em; font-size:10px; font-weight:900; }
+    .wait-title { margin:8px 0 10px; font-family:Georgia,'Times New Roman',serif; font-weight:700; font-size:clamp(31px,9vw,42px); line-height:1.04; letter-spacing:-.055em; }
+    .wait-title em { display:block; color:var(--pink); font-size:clamp(36px,11vw,53px); font-weight:500; text-shadow:2px 3px 0 #ffe9f2; }
+    .wait-description { margin:0 auto 17px; max-width:295px; font-size:12.5px; line-height:1.6; color:var(--muted); }
+    .timer-label { margin:0 0 8px; color:#836b91; font-size:10px; font-weight:900; letter-spacing:.11em; text-transform:uppercase; }
+    .time-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; }
+    .time-unit { min-width:0; display:flex; flex-direction:column; gap:5px; align-items:center; justify-content:center; padding:11px 2px 9px; border:1px solid #f1dfed; border-radius:15px; background:#fff0f6; box-shadow:0 3px 0 #f9e4ed; }
+    .time-unit:nth-child(2) { background:#fff6e4; border-color:#f2e5d1; box-shadow:0 3px 0 #faeed6; }
+    .time-unit:nth-child(3) { background:#f2ebff; border-color:#e9dffa; box-shadow:0 3px 0 #ede3fb; }
+    .time-unit:nth-child(4) { background:#eaf7f1; border-color:#dceddf; box-shadow:0 3px 0 #e1f1e9; }
+    .time-number { font-variant-numeric:tabular-nums; font-size:clamp(24px,8vw,31px); line-height:1; font-weight:900; color:#664c73; letter-spacing:-.06em; }
+    .time-name { font-size:9px; font-weight:900; color:#967b9d; letter-spacing:.035em; text-transform:uppercase; }
+    .tehran-time { margin:13px 0 0; font-size:11px; line-height:1.5; color:#88768e; }
+    .wait-button { margin-top:17px; min-height:43px; padding:11px 18px; border:0; border-radius:999px; color:#5d3657; background:#ffb1ca; box-shadow:0 4px 0 #f5d4e0; font-size:12px; font-weight:900; }
+    .wait-button:active { transform:translateY(3px); box-shadow:0 1px 0 #f5d4e0; }
+    .wait-note { min-height:15px; margin:11px auto 0; font-size:10.5px; color:#a394a6; line-height:1.5; }
+    @keyframes birthday-entrance { from { opacity:0; transform:translateY(13px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
+    @media (max-width:355px) { .wait-card { padding:17px 13px 20px; border-radius:24px; } .lock-art { height:108px; } .wait-description { margin-bottom:14px; } .time-grid { gap:5px; } .time-unit { padding:10px 1px 9px; border-radius:12px; } }
   </style>
 </head>
 <body>
-  <main class="card" aria-label="A birthday card for Negin">
+  <main id="countdown-screen" class="wait-card" aria-label="Countdown to Negin's birthday">
+    <div class="wait-top">
+      <span class="mini-tag">October 17 · a little surprise</span>
+      <span class="mini-heart" aria-hidden="true">♥ ✦</span>
+    </div>
+    <div class="lock-art" aria-hidden="true">
+      <span class="item tea">🍵</span>
+      <span class="item chocolate">🍫</span>
+      <span class="item star1">✧</span>
+      <span class="item star2">✦</span>
+      <span class="big-envelope"></span>
+    </div>
+    <p class="wait-eyebrow">shh... not quite yet!</p>
+    <h1 class="wait-title">A surprise for <em>Negin ♡</em></h1>
+    <p class="wait-description">Kamyab made you a little something. It unlocks the moment your birthday begins — with chai, chocolate, and a whole lot of love. 💗</p>
+    <p class="timer-label">Your birthday begins in</p>
+    <div class="time-grid" role="timer" aria-label="Time remaining until midnight in Tehran">
+      <div class="time-unit"><strong class="time-number" id="timer-days">00</strong><span class="time-name">Days</span></div>
+      <div class="time-unit"><strong class="time-number" id="timer-hours">00</strong><span class="time-name">Hours</span></div>
+      <div class="time-unit"><strong class="time-number" id="timer-minutes">00</strong><span class="time-name">Minutes</span></div>
+      <div class="time-unit"><strong class="time-number" id="timer-seconds">00</strong><span class="time-name">Seconds</span></div>
+    </div>
+    <p class="tehran-time">🕛 Opens at 12:00 AM on October 17, 2026<br>Tehran time (UTC+3:30)</p>
+    <button class="wait-button" id="waiting-wish" type="button">Send a little birthday luck ✨</button>
+    <p class="wait-note" id="waiting-note" role="status" aria-live="polite">Until then... how about a cup of chai? 🍵</p>
+    <noscript><p class="wait-note">Enable JavaScript to see the live countdown and birthday surprise.</p></noscript>
+  </main>
+
+  <main id="birthday-main" class="card" aria-label="A birthday card for Negin">
     <header class="top">
       <div class="tag"><span class="dot"></span> October 17 <span aria-hidden="true">♡</span></div>
       <div class="tools">
@@ -428,6 +511,41 @@
         }
         confettiLayer.append(frag);
       }
+
+
+      // A fixed UTC instant keeps the countdown in Tehran time regardless of where the visitor lives.
+      // Tehran is UTC+03:30 on October 17, 2026, so midnight is 20:30 UTC the previous day.
+      const birthdayAt = Date.parse('2026-10-16T20:30:00Z');
+      let countdownInterval;
+      let unlocked = document.documentElement.dataset.birthdayUnlocked === 'yes';
+      const padTime = (number) => String(number).padStart(2, '0');
+
+      function updateCountdown() {
+        const remaining = Math.max(0, birthdayAt - Date.now());
+        if (remaining === 0) {
+          if (countdownInterval) clearInterval(countdownInterval);
+          if (!unlocked) {
+            unlocked = true;
+            document.documentElement.dataset.birthdayUnlocked = 'yes';
+            if (!document.hidden) requestAnimationFrame(() => confetti(115));
+          }
+          return;
+        }
+        const secondsLeft = Math.ceil(remaining / 1000);
+        $('#timer-days').textContent = padTime(Math.floor(secondsLeft / 86400));
+        $('#timer-hours').textContent = padTime(Math.floor(secondsLeft / 3600) % 24);
+        $('#timer-minutes').textContent = padTime(Math.floor(secondsLeft / 60) % 60);
+        $('#timer-seconds').textContent = padTime(secondsLeft % 60);
+      }
+      updateCountdown();
+      if (!unlocked) countdownInterval = window.setInterval(updateCountdown, 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) updateCountdown();
+      });
+      $('#waiting-wish').addEventListener('click', () => {
+        $('#waiting-note').textContent = 'A little extra luck is on its way to Negin! 💗';
+        confetti(32);
+      });
 
       $('#cake-btn').addEventListener('click', () => {
         candlesBlown = !candlesBlown;
